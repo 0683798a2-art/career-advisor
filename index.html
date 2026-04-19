@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستشار مهني - تحليل الشخصية</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: #333;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100%;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 15px;
+            border-right: 4px solid #667eea;
+        }
+        
+        .question {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .option input[type="radio"] {
+            margin-left: 10px;
+            transform: scale(1.2);
+        }
+        
+        .option input[type="checkbox"] {
+            margin-left: 10px;
+            transform: scale(1.2);
+        }
+        
+        .option.selected {
+            border-color: #667eea;
+            background: #ebf4ff;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            display: none;
+        }
+        
+        .result-item {
+            background: #f0fff4;
+            border: 2px solid #68d391;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .result-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #22543d;
+            margin-bottom: 10px;
+        }
+        
+        .result-description {
+            color: #2f855a;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .career-suggestions {
+            background: #e6fffa;
+            border: 1px solid #4fd1c7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .career-title {
+            font-weight: 600;
+            color: #234e52;
+            margin-bottom: 8px;
+        }
+        
+        .career-list {
+            color: #2c7a7b;
+            font-size: 0.95rem;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .restart-btn {
+            background: #e53e3e;
+            margin-top: 10px;
+        }
+        
+        .restart-btn:hover {
+            background: #c53030;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>🎯 مستشار مهني</h1>
+                <p> اكتشف شخصيتك المهنية واحصل على توجيهات مخصصة لمسارك الوظيفي</p>
+            </div>
+            
+            <div id="quiz-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                
+                <div id="question-display"></div>
+                
+                <button class="btn" id="next-btn" onclick="nextQuestion()">التالي</button>
+            </div>
+            
+            <div class="results" id="results">
+                <div class="result-item">
+                    <div class="result-title" id="personality-type"></div>
+                    <div class="result-description" id="personality-description"></div>
+                    <div class="career-suggestions">
+                        <div class="career-title">المهن المناسبة لك:</div>
+                        <div class="career-list" id="career-list"></div>
+                    </div>
+                </div>
+                
+                <button class="btn restart-btn" onclick="restartQuiz()">إعادة الاختبار</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "كيف تفضل قضاء وقت فراغك؟",
+                type: "radio",
+                options: [
+                    { text: "القراءة أو التعلم الذاتي", value: "analytical" },
+                    { text: "التواصل مع الأصدقاء والعائلة", value: "social" },
+                    { text: "ممارسة الأنشطة الفنية أو الإبداعية", value: "creative" },
+                    { text: "ممارسة الرياضة أو الأنشطة البدنية", value: "practical" }
+                ]
+            },
+            {
+                question: "ما الذي يحفزك أكثر في العمل؟",
+                type: "radio",
+                options: [
+                    { text: "حل المشاكل المعقدة والتحليل", value: "analytical" },
+                    { text: "مساعدة الآخرين وإحداث تأثير إيجابي", value: "social" },
+                    { text: "التعبير عن الأفكار بطرق مبتكرة", value: "creative" },
+                    { text: "إنجاز المهام العملية بكفاءة", value: "practical" }
+                ]
+            },
+            {
+                question: "كيف تتعامل مع المشاكل؟",
+                type: "radio",
+                options: [
+                    { text: "أحلل البيانات وأبحث عن الحلول المنطقية", value: "analytical" },
+                    { text: "أستشير الآخرين وأعمل كفريق", value: "social" },
+                    { text: "أفكر خارج الصندوق وأبتكر حلول جديدة", value: "creative" },
+                    { text: "أطبق الحلول المجربة والعملية", value: "practical" }
+                ]
+            },
+            {
+                question: "ما نوع البيئة التي تفضل العمل فيها؟",
+                type: "radio",
+                options: [
+                    { text: "مكتب هادئ مع إمكانية التركيز العميق", value: "analytical" },
+                    { text: "بيئة تفاعلية مع فرق متنوعة", value: "social" },
+                    { text: "مساحة مفتوحة تشجع على الإبداع", value: "creative" },
+                    { text: "ورشة عمل أو مكان عملي", value: "practical" }
+                ]
+            },
+            {
+                question: "ما هي نقاط قوتك الرئيسية؟",
+                type: "checkbox",
+                options: [
+                    { text: "التفكير النقدي والتحليلي", value: "analytical" },
+                    { text: "التواصل والعمل الجماعي", value: "social" },
+                    { text: "الإبداع والابتكار", value: "creative" },
+                    { text: "المهارات العملية والتنفيذية", value: "practical" }
+                ]
+            }
+        ];
+
+        const personalityTypes = {
+            analytical: {
+                title: "🔬 المحلل الاستراتيجي",
+                description: "أنت شخص يحب التفكير العميق والتحليل المنطقي. تتميز بقدرتك على حل المشاكل المعقدة واتخاذ قرارات مدروسة بناءً على البيانات والحقائق.",
+                careers: "محلل بيانات، مهندس، باحث، محاسب، مطور برمجيات، استشاري مالي، عالم، محلل أعمال"
+            },
+            social: {
+                title: "🤝 القائد الاجتماعي",
+                description: "أنت شخص يستمد طاقته من التفاعل مع الآخرين. تتميز بمهارات التواصل القوية والقدرة على بناء العلاقات وتحفيز الفرق لتحقيق الأهداف المشتركة.",
+                careers: "مدير موارد بشرية، معلم، مستشار، مدير مبيعات، أخصائي علاقات عامة، مدرب، أخصائي اجتماعي، قائد فريق"
+            },
+            creative: {
+                title: "🎨 المبدع المبتكر",
+                description: "أنت شخص يفكر خارج الصندوق ويحب التعبير عن الأفكار بطرق مبتكرة. تتميز بالخيال الواسع والقدرة على إيجاد حلول إبداعية للتحديات.",
+                careers: "مصمم جرافيك، كاتب، مخرج، مصور، مهندس معماري، مطور ألعاب، فنان، مصمم أزياء"
+            },
+            practical: {
+                title: "🔧 المنفذ العملي",
+                description: "أنت شخص يحب العمل بيديه وتطبيق المعرفة النظرية عملياً. تتميز بالكفاءة في إنجاز المهام والقدرة على التعامل مع التحديات العملية بفعالية.",
+                careers: "مهندس ميكانيكي، فني، مدير مشاريع، طبيب، ممرض، طيار، رياضي محترف، مدير عمليات"
+            }
+        };
+
+        let currentQuestion = 0;
+        let answers = { analytical: 0, social: 0, creative: 0, practical: 0 };
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            const questionDisplay = document.getElementById('question-display');
+            
+            let optionsHTML = '';
+            question.options.forEach((option, index) => {
+                const inputType = question.type;
+                const inputName = question.type === 'radio' ? 'question' + currentQuestion : 'question' + currentQuestion + '_' + index;
+                
+                optionsHTML += `
+                    <div class="option" onclick="selectOption(this, '${option.value}', '${inputType}')">
+                        <input type="${inputType}" name="${inputName}" value="${option.value}" id="option_${currentQuestion}_${index}">
+                        <label for="option_${currentQuestion}_${index}">${option.text}</label>
+                    </div>
+                `;
+            });
+
+            questionDisplay.innerHTML = `
+                <div class="question-container">
+                    <div class="question-number">السؤال ${currentQuestion + 1} من ${questions.length}</div>
+                    <div class="question">${question.question}</div>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                </div>
+            `;
+
+            updateProgress();
+            updateNextButton();
+        }
+
+        function selectOption(element, value, type) {
+            if (type === 'radio') {
+                // Remove selected class from all options in this question
+                element.parentNode.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Add selected class to clicked option
+                element.classList.add('selected');
+                element.querySelector('input').checked = true;
+            } else {
+                // For checkbox, toggle selection
+                element.classList.toggle('selected');
+                const input = element.querySelector('input');
+                input.checked = !input.checked;
+            }
+            
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const nextBtn = document.getElementById('next-btn');
+            const currentQuestionElement = document.getElementById('question-display');
+            const selectedInputs = currentQuestionElement.querySelectorAll('input:checked');
+            
+            if (selectedInputs.length > 0) {
+                nextBtn.disabled = false;
+                nextBtn.textContent = currentQuestion === questions.length - 1 ? 'عرض النتائج' : 'التالي';
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.textContent = 'اختر إجابة للمتابعة';
+            }
+        }
+
+        function nextQuestion() {
+            // Record answers
+            const selectedInputs = document.querySelectorAll('#question-display input:checked');
+            selectedInputs.forEach(input => {
+                answers[input.value]++;
+            });
+
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function showResults() {
+            // Find dominant personality type
+            let maxScore = 0;
+            let dominantType = 'analytical';
+            
+            for (let type in answers) {
+                if (answers[type] > maxScore) {
+                    maxScore = answers[type];
+                    dominantType = type;
+                }
+            }
+
+            const personality = personalityTypes[dominantType];
+            
+            document.getElementById('personality-type').textContent = personality.title;
+            document.getElementById('personality-description').textContent = personality.description;
+            document.getElementById('career-list').textContent = personality.careers;
+            
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = { analytical: 0, social: 0, creative: 0, practical: 0 };
+            
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            displayQuestion();
+        }
+
+        // Initialize quiz
+        displayQuestion();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98bab8b741031180',t:'MTc1OTk3OTgxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
